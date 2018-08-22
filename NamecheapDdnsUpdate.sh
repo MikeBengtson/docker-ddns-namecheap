@@ -137,8 +137,12 @@ then
       if [ "$oldIp" != "$ip" ]
       then
         message="New IP address detected for host ${host}: ${ip}"
-        mail -s "$message" $EMAIL </dev/null
+        if [ ! -z "$EMAIL" ]
+        then
+          mail -s "$message" $EMAIL </dev/null
+        fi
         echo "${ip}" >${saveIpFile}
+        echo $message
       fi
     else
       errorResponse=$(xmllint --xpath '//interface-response/responses/response/ResponseString/text()' - <<< "$response")
