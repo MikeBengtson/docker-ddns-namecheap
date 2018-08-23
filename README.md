@@ -19,9 +19,9 @@ The idea is to have a docker container to be able to run it into a RaspberryPi, 
 * EMAIL string - if exists, then an email will be generated on error or change of IP address and send to that address. Example: -e EMAIL="testyour@mail.es"
 * SECONDS integer - the number of seconds between updates. If not provided, the default value is 600 seconds (10 minutes). Example: -e SECONDS=300
 
-# Stop the container with the OpenVPN service
+# Stop the container with the DDNS service
 
-    sudo docker rm -f openvpn
+    sudo docker rm -f ddns
 
 # Log
 
