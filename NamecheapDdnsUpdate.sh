@@ -13,13 +13,13 @@
 # crontab -e
 # @hourly /path-to-script      <-- every hour
 # */5 * * * * /path-to-script  <-- every 5 minutes
-# 
+#
 # Configuration:
 #  DOMAIN string - name of domain to update
 #  PASSWORD string - the password given from NameCheap.com --> My Account --> Manage Domains --> Modify Domain --> Dynamic DNS
 #  HOSTS array of strings - the array of hosts to update.
 #  EMAIL string - if exists, then an email will be generated on error or change of IP address
-#  CACHED_IP_FILE string - path to file holding the last set IP address  
+#  CACHED_IP_FILE string - path to file holding the last set IP address
 #
 # Notes:
 # - Warning, if the host is ''. then host '@' will be set!
@@ -78,7 +78,7 @@ url="https://dynamicdns.park-your-domain.com/update?domain=${DOMAIN}&password=${
 settingsValidated=true
 messages=""
 # --------------------------------------------------------------------------------------------
-# Validate configuration 
+# Validate configuration
 # 1. DOMAIN must be a valid domain
 # 2. PASSWORD must not be empty
 # 3. HOSTS must be an array
@@ -130,23 +130,26 @@ then
     hostUrl=${url}${host}
     response=$(curl -s ''${hostUrl}'')
     errCount=$(xmllint --xpath '//interface-response/ErrCount/text()' - <<< "$response")
+    current_date=$(date '+%Y-%m-%d %H:%M:%S')
     if [ "$errCount" -eq "0" ]
     then
       ip=$(xmllint --xpath '//interface-response/IP/text()' - <<< "$response")
       oldIp=$(head -n 1 ${saveIpFile})
       if [ "$oldIp" != "$ip" ]
       then
-        message="New IP address detected for host ${host}: ${ip}"
+        message="[$current_date] New IP address detected for host ${host}: ${ip}"
         if [ ! -z "$EMAIL" ]
         then
           mail -s "$message" $EMAIL </dev/null
         fi
         echo "${ip}" >${saveIpFile}
-        echo $message
+      else
+        message="[$current_date] IP not changed <${ip}>"
       fi
+      echo $message
     else
       errorResponse=$(xmllint --xpath '//interface-response/responses/response/ResponseString/text()' - <<< "$response")
-      subject="Error updating DDNS for namecheap.com host ${host}@${DOMAIN}"
+      subject="[$current_date] Error updating DDNS for namecheap.com at host <${host}.${DOMAIN}>"
       message="Reason: ${errorResponse}"
 #echo ${response} | xmllint --format -
       formattedResponse="Full Response:\n"$( echo ${response} | xmllint --format - )
@@ -163,4 +166,3 @@ else
   echo -e "$messages"
   exit 1
 fi
-
