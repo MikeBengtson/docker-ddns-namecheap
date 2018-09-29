@@ -137,16 +137,19 @@ then
       oldIp=$(head -n 1 ${saveIpFile})
       if [ "$oldIp" != "$ip" ]
       then
-        message="[$current_date] New IP address detected for host ${host}: ${ip}"
+        message="[$current_date] New IP address detected for <${host}.${DOMAIN}>: ${ip}"
         if [ ! -z "$EMAIL" ]
         then
           mail -s "$message" $EMAIL </dev/null
         fi
         echo "${ip}" >${saveIpFile}
+        echo $message
       else
-        message="[$current_date] IP not changed <${ip}>"
+        if [ "$DEBUG" = "TRUE" ]; then
+          message="[$current_date] IP not changed <${ip}>"
+          echo $message
+        fi
       fi
-      echo $message
     else
       errorResponse=$(xmllint --xpath '//interface-response/responses/response/ResponseString/text()' - <<< "$response")
       subject="[$current_date] Error updating DDNS for namecheap.com at host <${host}.${DOMAIN}>"
