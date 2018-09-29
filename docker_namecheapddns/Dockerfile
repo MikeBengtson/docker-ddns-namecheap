@@ -17,4 +17,8 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/reposi
 
 WORKDIR /mnt
 
-CMD configure.sh && while true; do NamecheapDdnsUpdate.sh | tee -a /mnt/ddns.log; sleep $SECONDS; done
+CMD configure.sh && \
+    while true; do \
+        NamecheapDdnsUpdate.sh | tee -a /mnt/ddns.log; \
+        sleep $SECONDS; \
+    done
