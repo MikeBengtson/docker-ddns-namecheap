@@ -1,0 +1,5 @@
+TIMESTAMP=$(shell date -u +"%FT%H%MZ")
+RUN_FLAG=--restart unless-stopped 
+DOMAIN=-e DOMAIN="bengtsons.org"
+PASSWORD=-e PASSWORD="80c7b55a8f0743b48b75ca57cd0be22f"
+HOSTS=-e HOSTS="vpn"
